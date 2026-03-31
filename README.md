@@ -40,7 +40,7 @@ O projeto foi desenvolvido com foco em experiência do usuário, automação e u
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/6cb7e25e-a6ed-4eb0-bc55-d17a106d0dc6" width="45%" />
-</p>/>
+</p>
 
 
 🎯 Objetivo
