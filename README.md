@@ -47,7 +47,7 @@ O projeto foi desenvolvido com foco em experiência do usuário, automação e u
 
 🎯 Objetivo
 
-Este projeto foi desenvolvido para aprimorar minhas habilidades em desenvolvimento de sistemas e integração com inteligência artificial, com foco em soluções reais e aplicáveis.
+Projeto desenvolvido com foco em aprimorar habilidades em desenvolvimento front-end moderno, integração com ferramentas de IA e criação de interfaces profissionais.
 
 👨‍💻 Autor
 
