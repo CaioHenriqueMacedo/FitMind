@@ -39,9 +39,16 @@ export function MealsList({ meals }: MealsListProps) {
 
   async function handleDelete(id: string) {
     if (!confirm("Excluir esta refeicao?")) return
-    const supabase = createClient()
-    await supabase.from("meals").delete().eq("id", id)
-    router.refresh()
+    
+    try {
+      const response = await fetch(`/api/meals?id=${id}`, {
+        method: "DELETE",
+      })
+      if (!response.ok) throw new Error("Falha ao deletar refeicao")
+      router.refresh()
+    } catch (error) {
+      alert("Erro ao deletar refeicao.")
+    }
   }
 
   if (meals.length === 0) {

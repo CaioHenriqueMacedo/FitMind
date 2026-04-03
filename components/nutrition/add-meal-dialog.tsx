@@ -48,22 +48,33 @@ export function AddMealDialog({ userId }: AddMealDialogProps) {
     e.preventDefault()
     setLoading(true)
 
-    const supabase = createClient()
-    await supabase.from("meals").insert({
-      user_id: userId,
-      name,
-      meal_type: type,
-      calories: calories ? parseInt(calories) : null,
-      protein: protein ? parseFloat(protein) : null,
-      carbs: carbs ? parseFloat(carbs) : null,
-      fat: fat ? parseFloat(fat) : null,
-      logged_at: new Date().toISOString(),
-    })
+    try {
+      const response = await fetch("/api/meals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          type,
+          calories: calories ? parseInt(calories) : 0,
+          protein: protein ? parseFloat(protein) : undefined,
+          carbs: carbs ? parseFloat(carbs) : undefined,
+          fat: fat ? parseFloat(fat) : undefined,
+        }),
+      })
 
-    setLoading(false)
-    setOpen(false)
-    resetForm()
-    router.refresh()
+      if (!response.ok) {
+        throw new Error("Falha ao registrar refeição")
+      }
+
+      setOpen(false)
+      resetForm()
+      router.refresh()
+    } catch (error) {
+      console.error(error)
+      alert("Erro ao registrar refeição.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   function resetForm() {

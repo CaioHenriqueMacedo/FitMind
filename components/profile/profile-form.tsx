@@ -53,25 +53,32 @@ export function ProfileForm({ profile, userId, userEmail }: ProfileFormProps) {
     setLoading(true)
     setSuccess(false)
 
-    const supabase = createClient()
-    await supabase
-      .from("profiles")
-      .upsert({
-        id: userId,
-        name,
-        email: userEmail,
-        age: age ? parseInt(age) : null,
-        weight: weight ? parseFloat(weight) : null,
-        height: height ? parseFloat(height) : null,
-        goal: goal || null,
-        updated_at: new Date().toISOString(),
+    try {
+      const response = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          age: age ? parseInt(age) : null,
+          weight: weight ? parseFloat(weight) : null,
+          height: height ? parseFloat(height) : null,
+          goal: goal || null,
+        }),
       })
 
-    setLoading(false)
-    setSuccess(true)
-    router.refresh()
+      if (!response.ok) {
+        throw new Error("Erro ao salvar")
+      }
 
-    setTimeout(() => setSuccess(false), 3000)
+      setLoading(false)
+      setSuccess(true)
+      router.refresh()
+
+      setTimeout(() => setSuccess(false), 3000)
+    } catch {
+      alert("Erro ao atualizar perfil")
+      setLoading(false)
+    }
   }
 
   return (

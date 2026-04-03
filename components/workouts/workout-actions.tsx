@@ -21,28 +21,38 @@ export function WorkoutActions({ workout }: WorkoutActionsProps) {
 
   async function handleComplete() {
     setLoading(true)
-    const supabase = createClient()
-    await supabase
-      .from("workouts")
-      .update({ 
-        completed: true, 
-        completed_at: new Date().toISOString() 
+    
+    try {
+      const res = await fetch("/api/workouts", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: workout.id, completed: true }),
       })
-      .eq("id", workout.id)
-
-    router.refresh()
-    setLoading(false)
+      if (!res.ok) throw new Error()
+      router.refresh()
+    } catch {
+      alert("Erro ao concluir treino.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleDelete() {
     if (!confirm("Tem certeza que deseja excluir este treino?")) return
     
     setLoading(true)
-    const supabase = createClient()
-    await supabase.from("workouts").delete().eq("id", workout.id)
     
-    router.refresh()
-    setLoading(false)
+    try {
+      const res = await fetch(`/api/workouts?id=${workout.id}`, {
+        method: "DELETE",
+      })
+      if (!res.ok) throw new Error()
+      router.refresh()
+    } catch {
+      alert("Erro ao excluir treino.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

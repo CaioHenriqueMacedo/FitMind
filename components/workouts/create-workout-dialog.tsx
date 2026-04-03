@@ -48,22 +48,34 @@ export function CreateWorkoutDialog({ userId }: CreateWorkoutDialogProps) {
     e.preventDefault()
     setLoading(true)
 
-    const supabase = createClient()
-    await supabase.from("workouts").insert({
-      user_id: userId,
-      name,
-      type,
-      duration_minutes: duration ? parseInt(duration) : null,
-      calories_burned: calories ? parseInt(calories) : null,
-    })
+    try {
+      const response = await fetch("/api/workouts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          type,
+          duration_minutes: duration ? parseInt(duration) : null,
+          calories_burned: calories ? parseInt(calories) : null,
+        }),
+      })
 
-    setLoading(false)
-    setOpen(false)
-    setName("")
-    setType("")
-    setDuration("")
-    setCalories("")
-    router.refresh()
+      if (!response.ok) {
+        throw new Error("Falha ao criar treino")
+      }
+
+      setOpen(false)
+      setName("")
+      setType("")
+      setDuration("")
+      setCalories("")
+      router.refresh()
+    } catch (error) {
+      console.error(error)
+      alert("Ocorreu um erro ao criar o treino.")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

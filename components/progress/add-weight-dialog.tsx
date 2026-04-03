@@ -29,23 +29,27 @@ export function AddWeightDialog({ userId }: AddWeightDialogProps) {
     e.preventDefault()
     setLoading(true)
 
-    const supabase = createClient()
-    await supabase.from("weight_history").insert({
-      user_id: userId,
-      weight: parseFloat(weight),
-      logged_at: new Date().toISOString().split("T")[0],
-    })
+    try {
+      const response = await fetch("/api/progress", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          weight: parseFloat(weight),
+        }),
+      })
 
-    // Also update profile weight
-    await supabase
-      .from("profiles")
-      .update({ weight: parseFloat(weight) })
-      .eq("id", userId)
+      if (!response.ok) {
+        throw new Error("Erro ao salvar peso")
+      }
 
-    setLoading(false)
-    setOpen(false)
-    setWeight("")
-    router.refresh()
+      setLoading(false)
+      setOpen(false)
+      setWeight("")
+      router.refresh()
+    } catch {
+      alert("Erro ao salvar peso.")
+      setLoading(false)
+    }
   }
 
   return (

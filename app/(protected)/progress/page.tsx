@@ -7,31 +7,35 @@ export default async function ProgressPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Get weight history
-  const { data: weightHistory } = await supabase
-    .from("weight_history")
-    .select("*")
-    .eq("user_id", user!.id)
-    .order("logged_at", { ascending: true })
-    .limit(30)
-
-  // Get workout stats (last 30 days)
   const thirtyDaysAgo = new Date()
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-  
-  const { data: recentWorkouts } = await supabase
-    .from("workouts")
-    .select("*")
-    .eq("user_id", user!.id)
-    .eq("completed", true)
-    .gte("completed_at", thirtyDaysAgo.toISOString())
 
-  // Get profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("weight, goal")
-    .eq("id", user!.id)
-    .single()
+  // Run all queries in parallel for maximum performance
+  const [
+    { data: weightHistory },
+    { data: recentWorkouts },
+    { data: profile },
+  ] = await Promise.all([
+    supabase
+      .from("weight_history")
+      .select("id, weight, date, logged_at, created_at")
+      .eq("user_id", user!.id)
+      .order("date", { ascending: true })
+      .limit(30),
+
+    supabase
+      .from("workouts")
+      .select("id, name, type, duration_minutes, calories_burned, completed_at")
+      .eq("user_id", user!.id)
+      .eq("completed", true)
+      .gte("completed_at", thirtyDaysAgo.toISOString()),
+
+    supabase
+      .from("profiles")
+      .select("weight, goal")
+      .eq("id", user!.id)
+      .single(),
+  ])
 
   return (
     <div className="min-h-screen p-6 md:p-8">

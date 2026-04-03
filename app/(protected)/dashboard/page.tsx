@@ -9,37 +9,43 @@ export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", user!.id)
-    .single()
-
-  // Get today's goals
   const today = new Date().toISOString().split("T")[0]
-  const { data: dailyGoals } = await supabase
-    .from("daily_goals")
-    .select("*")
-    .eq("user_id", user!.id)
-    .eq("date", today)
-    .single()
 
-  // Get today's workouts
-  const { data: todayWorkouts } = await supabase
-    .from("workouts")
-    .select("*")
-    .eq("user_id", user!.id)
-    .gte("created_at", `${today}T00:00:00`)
-    .lte("created_at", `${today}T23:59:59`)
-    .order("created_at", { ascending: false })
+  // Run all queries in parallel for maximum performance
+  const [
+    { data: profile },
+    { data: dailyGoals },
+    { data: todayWorkouts },
+    { data: todayMeals },
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("name, goal, weight")
+      .eq("id", user!.id)
+      .single(),
 
-  // Get today's meals
-  const { data: todayMeals } = await supabase
-    .from("meals")
-    .select("*")
-    .eq("user_id", user!.id)
-    .gte("logged_at", `${today}T00:00:00`)
-    .lte("logged_at", `${today}T23:59:59`)
+    supabase
+      .from("daily_goals")
+      .select("*")
+      .eq("user_id", user!.id)
+      .eq("date", today)
+      .single(),
+
+    supabase
+      .from("workouts")
+      .select("id, name, type, duration_minutes, calories_burned, completed, completed_at, created_at")
+      .eq("user_id", user!.id)
+      .gte("created_at", `${today}T00:00:00`)
+      .lte("created_at", `${today}T23:59:59`)
+      .order("created_at", { ascending: false }),
+
+    supabase
+      .from("meals")
+      .select("id, name, meal_type, calories, protein, carbs, fat, logged_at")
+      .eq("user_id", user!.id)
+      .gte("logged_at", `${today}T00:00:00`)
+      .lte("logged_at", `${today}T23:59:59`),
+  ])
 
   return (
     <div className="min-h-screen p-6 md:p-8">
