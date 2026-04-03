@@ -16,10 +16,15 @@ const SUGGESTIONS = [
 
 export default function CoachPage() {
   const [input, setInput] = useState("")
+  const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/coach" }),
+    onError: (error) => {
+      console.error("Coach IA error:", error)
+      setErrorMsg("O Coach IA encontrou um problema. Verifique sua chave GROQ_API_KEY e tente novamente.")
+    },
   })
 
   const isLoading = status === "streaming" || status === "submitted"
@@ -31,12 +36,14 @@ export default function CoachPage() {
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!input.trim() || isLoading) return
+    setErrorMsg(null)
     sendMessage({ text: input })
     setInput("")
   }
 
   function handleSuggestion(suggestion: string) {
     if (isLoading) return
+    setErrorMsg(null)
     sendMessage({ text: suggestion })
   }
 
@@ -161,6 +168,17 @@ export default function CoachPage() {
               )}
             </Button>
           </form>
+          {errorMsg && (
+            <div className="mt-3 flex items-start gap-2 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive">
+              <span>⚠️ {errorMsg}</span>
+              <button
+                onClick={() => setErrorMsg(null)}
+                className="ml-auto shrink-0 font-bold hover:opacity-70"
+              >
+                ✕
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
