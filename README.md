@@ -71,11 +71,11 @@ Essas ferramentas foram utilizadas para auxiliar na construção da lógica, seg
 </p>
 
 <p align="center">
- <img src="https://github.com/user-attachments/assets/c2868044-1d8d-49a6-b947-a0c6184962b2" width="45%" />
+ <img src="https://github.com/user-attachments/assets/c2868044-1d8d-49a6-b947-a0c6184962b2" width="30%" />
 </p>
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/6cb7e25e-a6ed-4eb0-bc55-d17a106d0dc6" width="45%" />
+  <img src="https://github.com/user-attachments/assets/6cb7e25e-a6ed-4eb0-bc55-d17a106d0dc6" width="30%" />
 </p>
 
 
