@@ -8,23 +8,57 @@ Aplicação moderna de fitness com inteligência artificial, desenvolvida para a
 
 🧠 Sobre o projeto
 
-O FitMind é uma aplicação que utiliza inteligência artificial para gerar recomendações personalizadas de treino e hábitos saudáveis com base nos objetivos do usuário.
+O FitMind é uma aplicação completa que utiliza inteligência artificial para gerar recomendações personalizadas de treino, alimentação e hábitos saudáveis com base nos objetivos do usuário.
 
-O projeto foi desenvolvido com foco em experiência do usuário, automação e uso prático de IA no dia a dia.
+O projeto foi desenvolvido com foco em experiência do usuário, automação e uso prático de IA no dia a dia, simulando um ambiente real de aplicação SaaS.
+
+Além disso, toda a estrutura foi pensada para ser segura, escalável e pronta para produção.
 
 ⚙️ Funcionalidades
 
-- 🧠 Recomendações inteligentes de treino
-- 📊 Acompanhamento de evolução
+- 🧠 Recomendações inteligentes de treino com IA
+- 🤖 Assistente virtual (AI Coach) integrado
+- 📊 Acompanhamento de evolução física
 - 📅 Organização de rotina fitness
-- 💬 Interface interativa
-- ⚡ Sistema rápido e responsivo
+- 🍽️ Registro de alimentação
+- 👤 Gerenciamento de perfil e metas
+- 🔐 Autenticação segura de usuários
+- ⚡ Interface rápida, moderna e responsiva
 
-🛠️ Tecnologias
+🛠️ Tecnologias e Arquitetura
 
-- HTML, CSS, JavaScript / React
-- Integração com IA
-- Deploy na Vercel
+- ⚛️ React / Next.js (App Router)
+- 🎨 HTML, CSS, JavaScript
+- 🧠 Integração com IA (OpenAI)
+- 🗄️ Supabase (Banco de dados + autenticação)
+- 🔐 Row Level Security (RLS) para proteção de dados
+- 📡 API Routes (Next.js backend)
+- 🧪 Validação com Zod
+- ☁️ Deploy na Verce
+
+🤖 Inteligência Artificial
+
+A aplicação conta com um assistente inteligente que responde de forma dinâmica às necessidades do usuário, gerando sugestões personalizadas de treino, dieta e hábitos saudáveis.
+
+A integração foi feita de forma segura utilizando variáveis de ambiente, garantindo que as chaves de API não sejam expostas no frontend.
+
+🧱 Arquitetura e Segurança
+
+- 🔒 Backend estruturado com API Routes (Next.js)
+- 🔐 Autenticação via Supabase
+- 🛡️ Implementação de Row Level Security (RLS)
+- 🚫 Proteção contra acesso indevido aos dados
+- ✅ Validação de dados no frontend e backend
+- 🔑 Uso de variáveis de ambiente (.env)
+
+⚡ Desenvolvimento com IA
+
+Parte da implementação foi acelerada utilizando ferramentas de IA como:
+
+- 🤖 Antigravity
+- 🧠 Claude
+
+Essas ferramentas foram utilizadas para auxiliar na construção da lógica, segurança da aplicação e integração com serviços externos, mantendo boas práticas de desenvolvimento.
 
 📸 Preview
 
@@ -47,7 +81,7 @@ O projeto foi desenvolvido com foco em experiência do usuário, automação e u
 
 🎯 Objetivo
 
-Projeto desenvolvido com foco em aprimorar habilidades em desenvolvimento front-end moderno, integração com ferramentas de IA e criação de interfaces profissionais.
+Projeto desenvolvido com foco em aprimorar habilidades em desenvolvimento full-stack, integração com inteligência artificial, segurança de aplicações e criação de sistemas modernos prontos para produção.
 
 👨‍💻 Autor
 
