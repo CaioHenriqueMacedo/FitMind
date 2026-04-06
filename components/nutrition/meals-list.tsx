@@ -21,8 +21,8 @@ interface MealsListProps {
 }
 
 const mealTypeLabels: Record<string, string> = {
-  breakfast: "Cafe da Manha",
-  lunch: "Almoco",
+  breakfast: "Café da Manhã",
+  lunch: "Almoço",
   dinner: "Jantar",
   snack: "Lanche",
 }

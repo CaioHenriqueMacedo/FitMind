@@ -34,6 +34,7 @@ export async function PUT(req: Request) {
         weight: result.data.weight,
         height: result.data.height,
         goal: result.data.goal,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", user.id)
 

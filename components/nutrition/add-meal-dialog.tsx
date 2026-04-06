@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Loader2 } from "lucide-react"
+import { Plus, Loader2, Sparkles } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,8 +27,8 @@ interface AddMealDialogProps {
 }
 
 const mealTypes = [
-  { value: "breakfast", label: "Cafe da Manha" },
-  { value: "lunch", label: "Almoco" },
+  { value: "breakfast", label: "Café da Manhã" },
+  { value: "lunch", label: "Almoço" },
   { value: "dinner", label: "Jantar" },
   { value: "snack", label: "Lanche" },
 ]
@@ -42,7 +42,43 @@ export function AddMealDialog({ userId }: AddMealDialogProps) {
   const [protein, setProtein] = useState("")
   const [carbs, setCarbs] = useState("")
   const [fat, setFat] = useState("")
+  const [isEstimating, setIsEstimating] = useState(false)
   const router = useRouter()
+
+  async function handleAIEstimate() {
+    if (!name.trim()) {
+      alert("Por favor, digite o nome de um alimento ou refeição primeiro.")
+      return
+    }
+
+    setIsEstimating(true)
+    try {
+      const response = await fetch("/api/nutrition/estimate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: name }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Falha na estimativa")
+      }
+
+      const data = await response.json()
+      
+      // Update form fields with AI suggestions
+      setCalories(data.calories.toString())
+      setProtein(data.protein.toString())
+      setCarbs(data.carbs.toString())
+      setFat(data.fat.toString())
+      if (data.name) setName(data.name)
+      
+    } catch (error) {
+      console.error(error)
+      alert("Não foi possível estimar a nutrição. Tente digitar os valores manualmente.")
+    } finally {
+      setIsEstimating(false)
+    }
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -91,30 +127,48 @@ export function AddMealDialog({ userId }: AddMealDialogProps) {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" />
-          Adicionar Refeicao
+          Adicionar Refeição
         </Button>
       </DialogTrigger>
       <DialogContent className="glass-card border-border sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Adicionar Refeicao</DialogTitle>
+          <DialogTitle>Adicionar Nova Refeição</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="meal-name">Nome</Label>
-            <Input
-              id="meal-name"
-              placeholder="Ex: Omelete com queijo"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
+            <Label htmlFor="meal-name">O que você comeu?</Label>
+            <div className="flex gap-2">
+              <Input
+                id="meal-name"
+                placeholder="Ex: 3 ovos mexidos, arroz e feijão..."
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="flex-1"
+              />
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon"
+                onClick={handleAIEstimate}
+                disabled={isEstimating || !name}
+                title="Estimar nutrição com IA"
+                className="shrink-0 border-primary/30 text-primary hover:bg-primary/10"
+              >
+                {isEstimating ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="meal-type">Tipo de Refeicao</Label>
+            <Label htmlFor="meal-type">Tipo de Refeição</Label>
             <Select value={type} onValueChange={setType} required>
               <SelectTrigger>
-                <SelectValue placeholder="Selecione" />
+                <SelectValue placeholder="Selecione o tipo" />
               </SelectTrigger>
               <SelectContent>
                 {mealTypes.map((t) => (
@@ -128,7 +182,7 @@ export function AddMealDialog({ userId }: AddMealDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="calories">Calorias</Label>
+              <Label htmlFor="calories">Calorias (kcal)</Label>
               <Input
                 id="calories"
                 type="number"
@@ -138,12 +192,12 @@ export function AddMealDialog({ userId }: AddMealDialogProps) {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="protein">Proteina (g)</Label>
+              <Label htmlFor="protein">Proteína (g)</Label>
               <Input
                 id="protein"
                 type="number"
                 step="0.1"
-                placeholder="20"
+                placeholder="0"
                 value={protein}
                 onChange={(e) => setProtein(e.target.value)}
               />

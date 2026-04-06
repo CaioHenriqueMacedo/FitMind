@@ -25,21 +25,27 @@ export async function POST(req: Request) {
     const weightEntry = {
       user_id: user.id,
       weight: result.data.weight,
-      date: new Date().toISOString().split("T")[0],
+      logged_at: new Date().toISOString().split("T")[0],
     }
 
     // Add entry to weight_history
-    const { error } = await supabase.from("weight_history").insert(weightEntry)
+    const { error: historyError } = await supabase.from("weight_history").insert(weightEntry)
 
-    if (error) {
-      return NextResponse.json({ error: "Erro ao registrar peso" }, { status: 500 })
+    if (historyError) {
+      console.error("Error inserting weight history:", historyError)
+      return NextResponse.json({ error: "Erro ao registrar peso no historico" }, { status: 500 })
     }
 
     // Update profile with current weight
-    await supabase
+    const { error: profileError } = await supabase
       .from("profiles")
-      .update({ current_weight: result.data.weight })
+      .update({ weight: result.data.weight, updated_at: new Date().toISOString() })
       .eq("id", user.id)
+
+    if (profileError) {
+      console.error("Error updating profile weight:", profileError)
+      return NextResponse.json({ error: "Erro ao atualizar peso no perfil" }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (error) {

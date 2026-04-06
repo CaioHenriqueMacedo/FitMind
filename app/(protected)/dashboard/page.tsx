@@ -47,6 +47,24 @@ export default async function DashboardPage() {
       .lte("logged_at", `${today}T23:59:59`),
   ])
 
+  // Compute actual consumption from records
+  const consumedCalories = todayMeals?.reduce((sum, m) => sum + (m.calories || 0), 0) || 0
+  const consumedProtein = todayMeals?.reduce((sum, m) => sum + (m.protein || 0), 0) || 0
+  const completedWorkouts = todayWorkouts?.filter(w => w.completed).length || 0
+
+  const computedDailyGoals = {
+    ...(dailyGoals || {
+      calorie_goal: 2000,
+      protein_goal: 150,
+      workout_goal: 1,
+      water_goal: 8,
+      water_consumed: 0,
+    }),
+    calories_consumed: consumedCalories,
+    protein_consumed: consumedProtein,
+    workouts_completed: completedWorkouts,
+  }
+
   return (
     <div className="min-h-screen p-6 md:p-8">
       <DashboardHeader profile={profile} />
@@ -54,13 +72,13 @@ export default async function DashboardPage() {
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         {/* Main Content */}
         <div className="space-y-6 lg:col-span-2">
-          <StatsCards dailyGoals={dailyGoals} />
+          <StatsCards dailyGoals={computedDailyGoals} />
           <TodayWorkout workouts={todayWorkouts || []} />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          <NutritionSummary meals={todayMeals || []} dailyGoals={dailyGoals} />
+          <NutritionSummary meals={todayMeals || []} dailyGoals={computedDailyGoals} />
           <QuickActions />
         </div>
       </div>
